@@ -1,33 +1,21 @@
 import * as uuid from 'uuid';
-import AWS from 'aws-sdk';
+import db from './libs/dblibs';
+import handler from './libs/handlerlib';
 
-const db = new AWS.DynamoDB.DocumentClient();
-
-export const main = async (event, context) => {
-  const data = JSON.parse(event.body);
-
-  const dbparams = {
-    TableName: process.env.tableName,
-    Item: {
-      userId: '123',
-      noteId: uuid.v1(),
-      content: data.content,
-      attachment: data.attachment,
-      createdAt: Date.now(),
-    },
-  };
-
-  try {
-    await db.put(dbparams).promise();
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(dbparams.Item),
+export const main = handler(async (event, context) => {
+    const data = JSON.parse(event.body);
+    const dbparams = {
+      TableName: process.env.tableName,
+      Item: {
+        userId: '123',
+        noteId: uuid.v1(),
+        content: data.content,
+        attachment: data.attachment,
+        createdAt: Date.now(),
+      },
     };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
-  }
-};
+
+    await db.put(dbparams);
+
+    return dbparams.Item;
+});
