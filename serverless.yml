@@ -22,6 +22,20 @@ provider:
   #
   #environment:
   #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
+  environment: 
+    tableName: notes
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: "arn:aws:dynamodb:ca-central-1:*:*"
 
 functions:
   hello:
@@ -30,3 +44,10 @@ functions:
       - http:
           path: hello
           method: get
+  create:
+    handler: create.main
+    events:
+      - http:
+          path: notes
+          method: post
+          # authorizer: aws_iam
