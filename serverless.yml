@@ -51,3 +51,10 @@ functions:
           path: notes
           method: post
           # authorizer: aws_iam
+  get:
+    handler: get.main
+    events:
+      - http:
+          path: notes/{id}
+          method: get
+          # authorizer: aws_iam          
